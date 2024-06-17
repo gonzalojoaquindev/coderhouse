@@ -77,19 +77,22 @@ CREATE TABLE `planned_transactions` (
   `id` serial PRIMARY KEY,
   `category_id` integer REFERENCES categories(id),
   `user_id` integer REFERENCES users(id),
+  `benefited_id` INT REFERENCES benefited(id),
   `account_id` integer REFERENCES personal_accounts(id),
   `expense` NUMERIC,
   `income` NUMERIC,
-  `date` date,
   `comment` text,
-  `pac` bool,
+  `type` text,
   `firts_payment` date,
+  `deadline` date,
   `repeat` bool,
   `every` integer,
+  `interval` text,
   `ends` integer,
   `total_amount` numeric,
-  `fee_to_pay` numeric
+  `pac` bool
 );
+
 
 CREATE TABLE `scheduled_transactions` (
   `id` serial PRIMARY KEY,
