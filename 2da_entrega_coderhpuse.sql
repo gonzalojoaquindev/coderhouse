@@ -26,15 +26,28 @@ RETURN resultado;
 END
 
 -- Stored procedures
-CREATE DEFINER=`root`@`localhost` PROCEDURE `crear_transacciones_programadas`(IN repeticiones int,IN planned_id INT, IN fecha date, in comentario text)
+DELIMITER $$
+CREATE PROCEDURE `getExpensesByCategoryYear`(IN año varchar(4))
 BEGIN
-SET @i = 1;
--- @productos = (SELECT COUNT(*) FROM sheduled_transactions);
-WHILE @i < @repeticiones
-    DO insert into scheduled_transactions values (null, planned_id, @i, fecha, comentario );
-    SET @i = @i + 1;
-end while;
+SELECT Categoria, FORMAT(SUM(Gastos),'C','Es-cl') as total, round(((SUM(Gastos)/(SELECT SUM(Gastos) from transactions_summary))*100  ),1) as porcentaje
+from transactions_summary
+WHERE YEAR(Fecha) = año
+group by Categoria
+order by porcentaje desc;
+END;
+$$
+
+DELIMITER $$
+CREATE PROCEDURE `getExpensesByCategories`(IN mes varchar(20), IN año varchar(4))
+BEGIN
+    SELECT YEAR(Fecha), Fecha, Categoria, Gastos
+    FROM transactions_summary
+    JOIN meses ON MONTH(Fecha) = meses.mes_numero
+    WHERE meses.nombre_mes = mes and YEAR(Fecha) = año and Tipo = 'gasto'
+    ORDER BY Fecha;
 END
+$$
+
 
 -- triggers
 
